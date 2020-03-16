@@ -2,84 +2,94 @@ package com.demo.security.controller;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.demo.security.auth.model.Account;
-import com.demo.security.auth.service.UserService;
+import com.demo.security.auth.service.UserServiceImpl;
 
 @Controller
 public class MemberController {
+	protected Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	/**
 	 * initial
 	 */
 	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
-	public ModelAndView login() {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("login");
-		
-		return modelAndView;
+	public String login(Model model) {
+		return "login";
 	}
 	
 	/**
-	 * Registration
+	 * Registration view
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public ModelAndView registration() {
-		ModelAndView mav = new ModelAndView();
-		Account user = new Account();
-		mav.addObject("user", user);
-		mav.setViewName("registration");
-		
-		return mav;
+	public String registration(Model model) {
+		model.addAttribute("user", new Account());
+		return "registration";
 	}
 	
 	/**
-	 * Registration
+	 * Registration form
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public ModelAndView createNewUser(@Valid Account user, BindingResult bindingResult) {
-		ModelAndView mav = new ModelAndView();
-		Account userExists = userService.findUserByUserName(user.getUsername());
-		if(userExists != null) {
-			bindingResult.rejectValue("username", "error.user", "There is already a user registered with the user name provided");
+	public String createNewUser(Model model, @Valid Account user, BindingResult bindingResult) {
+		try {
+			//< set the user information
+			model.addAttribute("user", new Account());
+			
+			//< check the user name already exist or not
+			Account userExists = userService.getUserByUsername(user.getUsername());
+			if(userExists != null) {
+				bindingResult.rejectValue("username", "error.user", "There is already a user registered with the user name provided");
+			}
+			
+			if(bindingResult.hasErrors()) {
+				log.error("[ykson] : " + bindingResult.getFieldError().toString());
+			}
+			else {
+				//< save the user information
+				userService.setUser(user);
+				
+				model.addAttribute("successMessage", "User has been registered successfully");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			model.addAttribute("successMessage", "FAIL : " + e.getMessage());
 		}
 		
-		if(bindingResult.hasErrors()) {
-			mav.setViewName("registration");
-		}
-		else {
-			userService.saveUser(user);
-			mav.addObject("successMessage", "User has been registered successfully");
-			mav.addObject("user", new Account());
-			mav.setViewName("registration");
-		}
-		
-		return mav;
+		return "registration";
 	}
 	
 	/**
 	 * Administration home
 	 */
 	@RequestMapping(value = "/admin/home", method = RequestMethod.GET)
-	public ModelAndView home() {
-		ModelAndView mav = new ModelAndView();
+	public String home(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Account user = userService.findUserByUserName(auth.getName());
-		mav.addObject("username", "Welcome " + user.getUsername() + " (" + user.getEmail() + ")");
-		mav.addObject("adminMessage", "Content Available Only for Users with Admin Role");
-		mav.setViewName("admin/home");
+		Account user = null;
+		try {
+			user = userService.getUserByUsername(auth.getName());
+		} catch (Exception e) {
+			log.error("[ykson]" + e.getMessage());
+		}
 		
-		return mav;
+		log.debug("[ykson] User information : " + auth.getAuthorities().toString());
+		
+		model.addAttribute("username", "Welcome " + user.getUsername() + " (" + user.getEmail() + ")");
+		model.addAttribute("adminMessage", "Content Available Only for Users with Admin Role");
+		
+		return "admin/home";
 	}
 }
 
