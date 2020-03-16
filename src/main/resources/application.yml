@@ -1,0 +1,52 @@
+
+# ==================================================================
+# Data Source
+# ==================================================================
+spring:
+  datasource:
+    url: jdbc:h2:file:/Users/leo/Downloads/h2-security
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+        
+# ==================================================================
+# Data Source : keep the connection alive if idle for a long time (needed in production)
+# ==================================================================
+    tomcat:
+      test-while-idle: true
+      validation-query: SELECT 1
+      
+# ==============================================================
+# = Initialize the database using data.sql script
+# ==============================================================
+    initialization-mode: always
+    
+# ==================================================================
+# h2 database
+# ==================================================================    
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      
+# ==================================================================
+# show a log of SQL query
+# ==================================================================
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+    
+# ==================================================================
+# Hibernate ddl auto (create, create-drop, update)
+# ==================================================================
+    hibernate:
+      ddl-auto: update
+      
+# ==============================================================
+# = The SQL dialect makes Hibernate generate better SQL for the chosen database
+# ==============================================================
+    database-platform: org.hibernate.dialect.H2Dialect
+
+
+
