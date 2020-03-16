@@ -8,6 +8,7 @@ xmlns:th="http://www.thymeleaf.org">
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
 </head>
 <body>
+	<h1 th:if="${error}" th:text="${error.user.account.username}" class="text-light"></h1>
     <div class="container-fluid p-5 mt-5 text-center">
         <h1 class="display-4 text-light">Spring Boot Security</h1>
         <form action="/login.html" th:action="@{/}" method="get">

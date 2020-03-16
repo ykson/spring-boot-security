@@ -7,9 +7,12 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,16 +23,26 @@ import com.demo.security.auth.model.Role;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
+	protected Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		//< get the user information
-		Account user = userService.findUserByUserName(username);
+		Account user = null;
+		try {
+			user = userService.getUserByUsername(username);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new UsernameNotFoundException(e.getMessage());
+		}
+		
+		//< set the user authorities
 		List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
 		
+		//< return the user details
 		return buildUserForAuthentication(user, authorities);
 	}
 	
@@ -45,7 +58,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 	
 	private UserDetails buildUserForAuthentication(Account user, List<GrantedAuthority> authorities) {
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getIsActive(), true, true, true, authorities);
+		return new User(user.getUsername(), user.getPassword(), user.getIsActive(), true, true, true, authorities);
 	}
 }
 
