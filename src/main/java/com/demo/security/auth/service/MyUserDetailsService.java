@@ -25,7 +25,7 @@ import com.demo.security.auth.model.Role;
 public class MyUserDetailsService implements UserDetailsService {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
-	private UserServiceImpl userService;
+	private AccountServiceImpl userService;
 
 	@Override
 	@Transactional

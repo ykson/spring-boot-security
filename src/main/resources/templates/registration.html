@@ -5,10 +5,8 @@ xmlns:th="http://www.thymeleaf.org">
     <title>Registration Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/registration.css" th:href="@{/css/registration.css}"/>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
 </head>
 <body>
-	<h1 th:if="${error}" th:text="${error.user.account.username}" class="text-light"></h1>
     <div class="container-fluid p-5 mt-5 text-center">
         <h1 class="display-4 text-light">Spring Boot Security</h1>
         <form action="/login.html" th:action="@{/}" method="get">
@@ -21,11 +19,11 @@ xmlns:th="http://www.thymeleaf.org">
                 <div class="card signup-form border-0">
                     <i class="fas fa-sign-in-alt mt-4 mx-auto fa-3x text-warning"></i>
                     <div class="card-body">
-                        <form autocomplete="off" action="#" th:action="@{/registration}" th:object="${user}" method="post" class="form-horizontal" role="form">
+                        <form autocomplete="off" action="#" th:action="@{/registration}" th:object="${account}" method="post" class="form-horizontal" role="form">
                             <h3 class="text-white text-uppercase mb-5">Registration</h3>
                             <!-- Email -->
                             <div class="form-group">
-                                <input type="text" th:field="*{email}" placeholder="Email" class="form-control signup-text"/>
+                                <input type="text" th:field="*{email}" placeholder="Email" class="form-control signup-text" autofocus />
                                 <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label>
                             </div>
                             <!-- user name -->
@@ -61,5 +59,6 @@ xmlns:th="http://www.thymeleaf.org">
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="/lib/fontawesome-free-5.12.1-web/js/all.js" crossorigin="anonymous"></script>
 </body>
 </html>

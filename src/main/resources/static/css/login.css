@@ -15,6 +15,10 @@ body {
 
 .login-text {
     background: #1F4758;
-    color: #000;
+    color: #eee;
     border: 0;
+}
+
+.login-text:focus {
+	color: #111;
 }
