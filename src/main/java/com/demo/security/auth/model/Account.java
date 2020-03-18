@@ -15,7 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
@@ -27,18 +28,19 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@Column(nullable = false)
-	@NotNull
+	@NotBlank
 	@Length(min = 4)
 	private String username;
 	@Column(nullable = false)
-	@NotNull
+	@NotBlank
 	@Length(min = 4)
 	private String password;
 	@Transient
-	@NotNull
+	@NotBlank
 	private String confirmPassword;
 	@Column(nullable = false)
-	@NotNull
+	@NotBlank
+	@Email
 	private String email;
 	@Column(nullable = false)
 	private Boolean isActive;

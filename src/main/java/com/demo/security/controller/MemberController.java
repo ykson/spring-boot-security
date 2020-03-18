@@ -27,7 +27,7 @@ public class MemberController {
 	 */
 	@RequestMapping(value = {"/", "/login"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String login(Model model) {
-		return "login";
+		return "/auth/login";
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public class MemberController {
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public String registration(Model model) {
 		model.addAttribute("account", new Account());
-		return "registration";
+		return "/auth/registration";
 	}
 	
 	/**
@@ -49,6 +49,11 @@ public class MemberController {
 			Account userExists = accountService.getUserByUsername(account.getUsername());
 			if(userExists != null) {
 				bindingResult.rejectValue("username", "error.user", "There is already a user registered with the user name provided");
+			}
+			
+			//< check the password
+			if(!account.getPassword().equals(account.getConfirmPassword())) {
+				bindingResult.rejectValue("confirmPassword", "error.user", "Password not matched");
 			}
 			
 			if(bindingResult.hasErrors()) {
@@ -67,7 +72,7 @@ public class MemberController {
 			model.addAttribute("successMessage", "FAIL : " + e.getMessage());
 		}
 		
-		return "registration";
+		return "/auth/registration";
 	}
 	
 	/**
@@ -86,7 +91,7 @@ public class MemberController {
 		model.addAttribute("username", "" + account.getUsername() + "(" + account.getEmail() + ")");
 		model.addAttribute("adminMessage", "Content Available Only for Users with Admin Role");
 		
-		return "home";
+		return "/index";
 	}
 	
 	/**
@@ -94,7 +99,7 @@ public class MemberController {
 	 */
 	@RequestMapping(value = "/home/admin", method = RequestMethod.GET)
 	public String adminHome(Model model) {
-		return "admin";
+		return "/home/admin";
 	}
 	
 	/**
@@ -102,7 +107,7 @@ public class MemberController {
 	 */
 	@RequestMapping(value = "/home/user", method = RequestMethod.GET)
 	public String userHome(Model model) {
-		return "user";
+		return "/home/user";
 	}
 	
 	/**
@@ -110,7 +115,7 @@ public class MemberController {
 	 */
 	@RequestMapping(value = "/home/guest", method = RequestMethod.GET)
 	public String guestHome(Model model) {
-		return "guest";
+		return "/home/guest";
 	}
 }
 
