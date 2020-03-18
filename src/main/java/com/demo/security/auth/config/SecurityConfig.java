@@ -9,10 +9,14 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.demo.security.auth.eo.ERole;
-import com.demo.security.auth.service.MyUserDetailsService;
+import com.demo.security.auth.handler.CustomAuthFailureHandler;
+import com.demo.security.auth.handler.CustomAuthSuccessHandler;
+import com.demo.security.auth.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private MyUserDetailsService userDetailsService;
+	private CustomUserDetailsService userDetailsService;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -38,7 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/", "/login", "/registration", "/h2/**").permitAll()
-				.antMatchers("/admin/**").hasAuthority(ERole.ADMIN.getValue())
+				.antMatchers("/home/admin").hasAuthority(ERole.ADMIN.getValue())
+				.antMatchers("/home/user").hasAuthority(ERole.MANAGER.getValue())
+				.antMatchers("/home/guest").hasAuthority(ERole.GUEST.getValue())
 				.anyRequest().authenticated()
 				.and()
 			.csrf()
@@ -48,8 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 			.formLogin()
 				.loginPage("/login")
+				.defaultSuccessUrl("/home")
 				.failureUrl("/login?error=true")
-				.defaultSuccessUrl("/admin/home")
+				.successHandler(successHandler())
+				.failureHandler(failureHandler())
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.and()
@@ -65,6 +73,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder passwordEncoder() {
 		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		return bCryptPasswordEncoder;
+	}
+	
+	@Bean
+	public AuthenticationSuccessHandler successHandler() {
+		return new CustomAuthSuccessHandler();
+	}
+	
+	@Bean
+	public AuthenticationFailureHandler failureHandler() {
+		return new CustomAuthFailureHandler();
 	}
 }
 
