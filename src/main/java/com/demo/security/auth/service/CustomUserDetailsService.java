@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,14 +18,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.demo.security.auth.AccountService;
 import com.demo.security.auth.model.Account;
 import com.demo.security.auth.model.Role;
 
-@Service
-public class MyUserDetailsService implements UserDetailsService {
+@Service(value = "customUserDetailsService")
+public class CustomUserDetailsService implements UserDetailsService {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
-	@Autowired
-	private AccountServiceImpl userService;
+	@Resource(name = "accountServiceImpl")
+	private AccountService accountService;
 
 	@Override
 	@Transactional
@@ -33,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
 		//< get the user information
 		Account user = null;
 		try {
-			user = userService.getUserByUsername(username);
+			user = accountService.getUserByUsername(username);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new UsernameNotFoundException(e.getMessage());
