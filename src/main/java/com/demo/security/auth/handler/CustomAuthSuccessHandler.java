@@ -26,7 +26,7 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
 	private final String DEFAULT_LOGIN_SUCCESS_URL = "/home";
 	
 	////////////////////////////////////////////////////////////////////////////////
-	//< public functions (constructor)
+	//< public functions (override)
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
