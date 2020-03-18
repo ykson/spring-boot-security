@@ -9,10 +9,12 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.demo.security.auth.eo.ERole;
+import com.demo.security.auth.handler.CustomAuthFailureHandler;
 import com.demo.security.auth.handler.CustomAuthSuccessHandler;
 import com.demo.security.auth.service.CustomUserDetailsService;
 
@@ -52,9 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 			.formLogin()
 				.loginPage("/login")
-				.failureUrl("/login?error=true")
 				.defaultSuccessUrl("/home")
+				.failureUrl("/login?error=true")
 				.successHandler(successHandler())
+				.failureHandler(failureHandler())
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.and()
@@ -75,6 +78,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AuthenticationSuccessHandler successHandler() {
 		return new CustomAuthSuccessHandler();
+	}
+	
+	@Bean
+	public AuthenticationFailureHandler failureHandler() {
+		return new CustomAuthFailureHandler();
 	}
 }
 

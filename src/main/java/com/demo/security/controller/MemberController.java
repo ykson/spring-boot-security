@@ -25,7 +25,7 @@ public class MemberController {
 	/**
 	 * initial
 	 */
-	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/", "/login"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String login(Model model) {
 		return "login";
 	}
