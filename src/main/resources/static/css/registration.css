@@ -10,6 +10,15 @@ body {
 
 .signup-text {
     background: #1F4758;
-    color: #000;
+    color: #eee;
     border: 0;
+}
+
+.signup-text:focus {
+	color: #111;
+}
+
+.validation-message {
+	color: #ee4835;
+	margin-bottom: auto;
 }
