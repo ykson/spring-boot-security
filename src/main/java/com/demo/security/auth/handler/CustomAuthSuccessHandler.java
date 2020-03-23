@@ -33,7 +33,7 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
 		//< clear authentication error
 		clearAuthenticationAttributes(request);
 		//< redirect page
-		redirectStratgy(request, response, authentication);
+		redirectStrategy(request, response, authentication);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
 		}
 	}
 	
-	private void redirectStratgy(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+	private void redirectStrategy(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		//< get the saved request
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 		if(savedRequest == null) {

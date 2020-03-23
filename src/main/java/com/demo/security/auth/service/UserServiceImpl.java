@@ -3,19 +3,21 @@ package com.demo.security.auth.service;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.demo.security.auth.AccountService;
+import com.demo.security.auth.UserService;
 import com.demo.security.auth.eo.ERole;
 import com.demo.security.auth.model.Account;
 import com.demo.security.auth.model.Role;
 import com.demo.security.auth.repository.RoleRepository;
 import com.demo.security.auth.repository.AccountRepository;
 
-@Service(value = "accountServiceImpl")
-public class AccountServiceImpl implements AccountService {
+@Service(value = "userServiceImpl")
+public class UserServiceImpl implements UserService {
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
@@ -46,6 +48,7 @@ public class AccountServiceImpl implements AccountService {
 	 * Save the user information
 	 */
 	@Override
+	@Transactional
 	public Account setUser(Account user) throws Exception {
 		//< encoding the password
 		user.setPassword(bcryptPasswordEncoder.encode(user.getPassword()));
