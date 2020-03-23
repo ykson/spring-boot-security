@@ -13,14 +13,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.demo.security.auth.AccountService;
+import com.demo.security.auth.UserService;
 import com.demo.security.auth.model.Account;
 
 @Controller
 public class MemberController {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
-	@Resource(name = "accountServiceImpl")
-	private AccountService accountService;
+	@Resource(name = "userServiceImpl")
+	private UserService userService;
 	
 	/**
 	 * initial
@@ -46,7 +46,7 @@ public class MemberController {
 	public String createNewUser(Model model, @Valid Account account, BindingResult bindingResult) {
 		try {
 			//< check the user name already exist or not
-			Account userExists = accountService.getUserByUsername(account.getUsername());
+			Account userExists = userService.getUserByUsername(account.getUsername());
 			if(userExists != null) {
 				bindingResult.rejectValue("username", "error.user", "There is already a user registered with the user name provided");
 			}
@@ -61,7 +61,7 @@ public class MemberController {
 			}
 			else {
 				//< save the user information
-				accountService.setUser(account);
+				userService.setUser(account);
 				
 				//< set the user information
 				model.addAttribute("user", new Account());
@@ -83,7 +83,7 @@ public class MemberController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Account account = null;
 		try {
-			account = accountService.getUserByUsername(auth.getName());
+			account = userService.getUserByUsername(auth.getName());
 		} catch (Exception e) {
 			log.error("[ykson]" + e.getMessage());
 		}
