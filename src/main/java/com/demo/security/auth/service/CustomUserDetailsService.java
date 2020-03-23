@@ -18,34 +18,38 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.demo.security.auth.AccountService;
+import com.demo.security.auth.UserService;
 import com.demo.security.auth.model.Account;
 import com.demo.security.auth.model.Role;
 
-@Service(value = "customUserDetailsService")
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
-	@Resource(name = "accountServiceImpl")
-	private AccountService accountService;
+	@Resource(name = "userServiceImpl")
+	private UserService userService;
+	
+	////////////////////////////////////////////////////////////////////////////////
+	//< public functions (override)
 
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		log.debug("[ykson] call the loadUserByUsername()");
 		//< get the user information
 		Account user = null;
 		try {
-			user = accountService.getUserByUsername(username);
+			user = userService.getUserByUsername(username);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 		
 		//< set the user authorities
-		List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
-		
-		//< return the user details
-		return buildUserForAuthentication(user, authorities);
+		return buildUserForAuthentication(user, getUserAuthority(user.getRoles()));
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	//< private functions
 	
 	private List<GrantedAuthority> getUserAuthority(Set<Role> userRole) {
 		Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
